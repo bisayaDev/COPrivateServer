@@ -13,6 +13,7 @@
     <property name="EmailStatus" column="EmailStatus" />
     <property name="Question" column="Question" />
     <property name="Answer" column="Answer" />
+    <property name="VipLevel" column="VipLevel" />
     <property name="Permission" column="Permission" />
     <property name="Token" column="Token" />
     <property name="Timestamp" column="Timestamp" />
