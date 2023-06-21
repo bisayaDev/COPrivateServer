@@ -79,10 +79,17 @@ namespace Redux.Managers
                     #region AddItem
                     case TradeType.AddItem:
                         {
-                            var _item = sender.GetItemByUID(packet.Target);
-                            if (_item != null && _item.IsTradeable)
-                            {                               
-                                if (sender == Owner)
+                           var _item = sender.GetItemByUID(packet.Target);
+                        if (!_item.IsTradeable)
+                        {
+                            Owner.SendMessage("Item " + _item.BaseItem.Name + " is not tradable.", ChatType.System);
+                            break;
+                        }
+
+                        if (_item != null && _item.IsTradeable)
+                            {
+                           
+                            if (sender == Owner)
                                 {
                                     if (Target.Inventory.Count + OwnerItems.Count < 40)
                                     {
