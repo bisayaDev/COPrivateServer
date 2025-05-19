@@ -39,7 +39,7 @@ namespace Redux.Npcs
                     break;
                 case 1:
                     if (_client.Money >= 1000)
-                    { _client.ChangeMap(2054, 383, 454); _client.Money -= 1000; }
+                    { _client.ChangeMap(1214, 805, 1195); _client.Money -= 1000; }
                     else
                     {
                         AddText("Sorry, you do not have enough.");

@@ -7,6 +7,8 @@ using Redux.Managers;
 using Redux.Packets.Game;
 using Redux.Space;
 using Redux.Enum;
+using System.Data;
+using Redux.Structures;
 
 namespace Redux.Game_Server
 {
@@ -63,6 +65,7 @@ namespace Redux.Game_Server
             //Pull a new location for us that fits within spawn grounds
             var loc = new Point(Common.Random.Next(Owner.TopLeft.X, Owner.BottomRight.X), Common.Random.Next(Owner.TopLeft.Y, Owner.BottomRight.Y));
             var loop = 0;
+
             while (!Map.IsValidMonsterLocation(loc))
             {
                 loop++;
@@ -124,7 +127,32 @@ namespace Redux.Game_Server
             SpawnPacket.StatusEffects = (ClientEffect)((ulong)ClientEffect.Ghost + (ulong)ClientEffect.Dead + (ulong)ClientEffect.Fade);
             SendToScreen(SpawnPacket);
             Map.Remove(this, false);
-            GenerateDrops(_attacker);
+            
+            if (x.BaseMonster.Name == "IcySerpent")
+            {
+                if (Common.PercentSuccess(Constants.TOKEN_DROP_RATE))
+                {
+                    if (Common.PercentSuccess(50))
+                    {
+                        DropItemByID(Constants.LANTERNTOKEN_ID, _attacker);
+                    }
+                    else
+                    {
+                        DropItemByID(Constants.GALAXYTOKEN_ID, _attacker);
+                    }
+                }
+                else
+                {
+                    DropItemByID(Constants.DRAGONBALL_ID, _attacker);
+                }
+                
+            }
+            else
+            {
+                GenerateDrops(_attacker);
+            }
+                
+            
 
             var killer = PlayerManager.GetUser(_attacker);
             if (killer != null && killer.Team != null)
@@ -196,22 +224,81 @@ namespace Redux.Game_Server
             }
             #endregion
 
-            #region Drop Rares
-            if (Common.PercentSuccess(Constants.CHANCE_METEOR))
-                DropItemByID(Constants.METEOR_ID, _killer);
+            #region Drop Rares (DRAGONBALL & METEOR)
+            var killerz = Map.Search<Player>(_killer);
+            if (killerz == null)
+                return;
+            var client = PlayerManager.GetUser(killerz.UID);
 
-            if (Common.PercentSuccess(Constants.CHANCE_DRAGONBALL))
-                DropItemByID(Constants.DRAGONBALL_ID, _killer);
+            if (Common.PercentSuccess(Constants.CHANCE_METEOR)) {
+
+                if (client.Account.VipLevel > PlayerVipLevel.Level3)// If account is atleast VIP 3, auto pick-up METEOR drop.
+                {
+                    
+                    if (killerz != null)
+                    {
+                        if (killerz.Inventory.Count >= 40)
+                        {
+                            killerz.SendMessage("Warning: Inventory is full!");
+                            killerz.SendMessage("A Meteor was dropped by a " + BaseMonster.Name + " monster killed by " + killerz.Name, ChatType.System);
+                            DropItemByID(Constants.METEOR_ID, _killer);
+                        }
+                        else
+                        {
+                            var item = killerz.CreateItem(Constants.METEOR_ID);
+                            if (item != null && item.BaseItem != null)
+                                killerz.SendMessage("You've received a " + item.BaseItem.Name + " for killing a(n) " + BaseMonster.Name + "!", ChatType.System);
+                        }
+                        
+                    }
+                }
+                else
+                {
+                    killerz.SendMessage("A Meteor was dropped by a " + BaseMonster.Name + " monster killed by " + killerz.Name, ChatType.System);
+                    DropItemByID(Constants.METEOR_ID, _killer);
+                }
+            }
+
+            if (Common.PercentSuccess(Constants.CHANCE_DRAGONBALL)) {
+
+                if (client.Account.VipLevel > PlayerVipLevel.Level5)//if account is atleast VIP5 auto pick-up Dragonball Drop
+                {
+
+                    if (killerz != null)
+                    {
+                        if (killerz.Inventory.Count >= 40)
+                        {
+                            killerz.SendMessage("Warning: Inventory is full!");
+                            killerz.SendMessage("A Dragonball was dropped by a " + BaseMonster.Name + " monster killed by " + killerz.Name, ChatType.System);
+                            DropItemByID(Constants.DRAGONBALL_ID, _killer);
+                        }
+                        else
+                        {
+                            var item = killerz.CreateItem(Constants.DRAGONBALL_ID);
+                            if (item != null && item.BaseItem != null)
+                                killerz.SendMessage("You've received a " + item.BaseItem.Name + " for killing a(n) " + BaseMonster.Name + "!", ChatType.System);
+                        }
+
+                    }
+                }
+                else
+                {
+                    killerz.SendMessage("A Dragonball was dropped by a " + BaseMonster.Name + " monster killed by " + killerz.Name, ChatType.System);
+                    DropItemByID(Constants.DRAGONBALL_ID, _killer);
+                }
+
+            }
             #endregion
 
             #region Drop Gear
-            while (Common.PercentSuccess(20) && dropCount < 4)
+            while (Common.PercentSuccess(10) && dropCount < 4)
                 DropItemByID(DropManager.GenerateDropID(BaseMonster.Level), _killer);
             #endregion
 
             #region Drop Money
             while (Common.PercentSuccess(20) && dropCount < 4)
             {
+                var killer = Map.Search<Player>(_killer);
                 uint value = (uint)Common.Random.Next(BaseMonster.Level, (int)(BaseMonster.Level * 15 * Constants.GOLD_RATE));
                 uint itemID = 1090000;
                 if (value > 10000)
@@ -224,22 +311,42 @@ namespace Redux.Game_Server
                     itemID = 1090020;
                 else if (value > 50)
                     itemID = 1090010;
-                DropItemByID(itemID, _killer, CurrencyType.Silver, value);
+                
+                
+                
+                if (killer.Account.VipLevel == PlayerVipLevel.Level7) //if VIP 7, auto loot money + advantage drop rate.
+                {
+                    int add_rate = (int)(BaseMonster.Level * 15);
+                    value += (uint)add_rate;
+                    killer.Money += value;
+                }
+                else if (killer.Account.VipLevel > PlayerVipLevel.Level0) //if atleast VIP 1 then auto loot money.
+                    killer.Money += value;
+                else
+                {
+                    DropItemByID(itemID, _killer, CurrencyType.Silver, value);
+                }
+
                 dropCount++;
             }
-            while (Common.PercentSuccess(Constants.CHANCE_POTION) && dropCount < 4)
+            #endregion
+            
+            //REMOVE DROP POTIONS
+            #region Drop Potions
+           /* while (Common.PercentSuccess(Constants.CHANCE_POTION) && dropCount < 4)
             {
                 var itemID = BaseMonster.DropHP;
                 if (Common.Random.Next(100) > 60)
                     itemID = BaseMonster.DropMP;
                 DropItemByID(itemID, _killer);
                 dropCount++;
-            }
+            }*/
             #endregion
         }
 
         private void DropItemByID(uint _id, uint _killer, CurrencyType _currency = CurrencyType.None, uint _value = 0)
         {
+            var killer = Map.Search<Player>(_killer);
             var itemInfo = Database.ServerDatabase.Context.ItemInformation.GetById(_id);
             if (itemInfo != null)
             {
@@ -247,19 +354,173 @@ namespace Redux.Game_Server
                 if (Map.IsValidItemLocation(loc))
                 {
                     var coItem = new Structures.ConquerItem((uint)Map.ItemCounter.Counter, itemInfo);
+
+                    //AUTOMATICALLY DROP DB AND METEOR TO GROUND
+                    if (_id == Constants.METEOR_ID || _id == Constants.DRAGONBALL_ID || _id == Constants.LANTERNTOKEN_ID || _id == Constants.GALAXYTOKEN_ID)
+                    {
+                        var gi = new GroundItem(coItem, coItem.UniqueID, loc, Map, _killer, _currency, _value);
+                        gi.AddToMap();
+                        return;
+                    }
+                    
                     if ((coItem.EquipmentSort == 1 || coItem.EquipmentSort == 3 || coItem.EquipmentSort == 4) && coItem.BaseItem.TypeDesc != "Earring")
                         coItem.Color = (byte)Common.Random.Next(3, 7);
                     if (coItem.EquipmentSort > 0 && coItem.EquipmentQuality > 3)
                         coItem.Durability = (ushort)Common.Random.Next(coItem.MaximumDurability);
                     else
                         coItem.Color = 3;
+
                     if (Common.PercentSuccess(Constants.CHANCE_PLUS))
                         coItem.Plus = 1;
+
+                    if (coItem.IsWeapon)//Add socket chance if Weapon drop.
+                    {
+                        if (Common.PercentSuccess(Constants.SOCKET_DROP))
+                        {
+                            coItem.Gem1 = 255;
+
+                            if (Common.PercentSuccess(Constants.SOCKET_DROP))
+                            {
+                                coItem.Gem2 = 255;
+                            }
+                        }
+                    }
+
+                    //if coItem is not Meteor or DB
+                    
+                    if (Common.PercentSuccess(Constants.CHANCE_NEGATIVE_1))
+                    {
+                        coItem.Bless = 1;
+                    }
+                    if (Common.PercentSuccess(Constants.CHANCE_NEGATIVE_3))
+                    {
+                        coItem.Bless = 3;
+                    }
+                    if (Common.PercentSuccess(Constants.CHANCE_NEGATIVE_5))
+                    {
+                        coItem.Bless = 5;
+                    }
+                     
+
                     var groundItem = new GroundItem(coItem, coItem.UniqueID, loc, Map, _killer, _currency, _value);
+
+
+                    #region VIP_AUTO_LOOT_PLUS_BLESS
+                    if (killer.Account.VipLevel >= PlayerVipLevel.Level5 && coItem.plus > 0) // If account is atleast VIP5, can auto loot +1 drop items
+                    {
+                        #region VIP6_AUTO_PICK_BLESS_ITEM
+                        if (killer.Account.VipLevel >= PlayerVipLevel.Level6 && coItem.Bless > 0)//if account is atleast VIP6 autoLoot negative or bless items
+                        {
+
+                            if (killer != null)
+                            {
+                                if (killer.Inventory.Count >= 40)
+                                {
+                                    killer.SendMessage("Warning: Inventory is full!");
+                                    //DROP ITEM TO THE GROUND
+                                    Managers.PlayerManager.SendToServer(new TalkPacket(ChatType.System, "A bless " + coItem.Bless + " " + coItem.BaseItem.Name + " has drop by a " + BaseMonster.Name + " killed by " + killer.Name));
+                                    groundItem.AddToMap();
+                                    return;
+                                }
+                                else
+                                {
+                                    //ADD NEGATIVE ITEM TO INVENTORY
+                                    var item = killer.CreateItem(coItem.StaticID, coItem.plus, coItem.Bless, 0, coItem.Gem1, coItem.Gem2);
+                                    Add_Save_Drop_Item(killer, item, "bless");
+                                    return;
+                                }
+
+                            }
+                            else //if killer is null
+                            {
+                                return;
+                            }
+                        }
+                        #endregion
+
+                        #region VIP5_AUTO_PICK_PLUS_ITEM
+                        if (killer != null)
+                        {
+                            if (killer.Inventory.Count >= 40)
+                            {
+                                killer.SendMessage("Warning: Inventory is full!");
+                                //DROP ITEM TO THE GROUND
+                                killer.SendMessage("A plus " + coItem.plus + " " + coItem.BaseItem.Name + " has drop by a " + BaseMonster.Name + " killed by " + killer.Name, ChatType.System);
+                                groundItem.AddToMap();
+                                return;
+                            }
+                            else
+                            {
+                                //ADD PLUS ITEM TO INVENTORY
+                                var item = killer.CreateItem(coItem.StaticID, coItem.plus, coItem.Bless, 0, coItem.Gem1, coItem.Gem2);
+                                Add_Save_Drop_Item(killer, item, "plus");
+                                return;
+                            }
+
+                        }
+                        else //if killer is null
+                        {
+                            return;
+                        }
+                        #endregion
+
+                    }
+
+                    #region VIP6_AUTO_PICK_BLESS_ITEM
+                    if (killer.Account.VipLevel >= PlayerVipLevel.Level6 && coItem.Bless > 0)//if account is atleast VIP6 autoLoot negative or bless items
+                    {
+
+                        if (killer != null)
+                        {
+                            if (killer.Inventory.Count >= 40)
+                            {
+                                killer.SendMessage("Warning: Inventory is full!");
+                                //DROP ITEM TO THE GROUND
+                                Managers.PlayerManager.SendToServer(new TalkPacket(ChatType.System, "A bless " + coItem.Bless + " " + coItem.BaseItem.Name + " has drop by a " + BaseMonster.Name + " killed by " + killer.Name));
+                                groundItem.AddToMap();
+                                return;
+                            }
+                            else
+                            {
+                                //ADD BLESS ITEM TO INVENTORY
+                                var item = killer.CreateItem(coItem.StaticID,coItem.plus,coItem.Bless,0,coItem.Gem1,coItem.Gem2);
+                                Add_Save_Drop_Item(killer, item, "bless");
+                                return;
+                            }
+
+                        }
+                        else //if killer is null
+                        {
+                            return;
+                        }
+                    }
+                    #endregion
+                    #endregion
+
                     groundItem.AddToMap();
+
                 }
             }
         }
+
+        public void Add_Save_Drop_Item(Player killer,ConquerItem item, String attr)
+        {
+            String str_attr = "";
+            if (attr == "plus")
+                str_attr = " plus " + item.plus + " ";
+            else if(attr == "bless")
+                str_attr = " bless " + item.Bless + " ";
+
+
+            if (item != null && item.BaseItem != null)
+            {
+                item.SetOwner(killer);
+                item.Save();
+                killer.SendMessage("You've received a" + str_attr + item.BaseItem.Name + " for killing a(n) " + BaseMonster.Name + "!", ChatType.System);
+            }
+        }
+
+
         public Point GetValidLocation()
         {
             Point loc = Location;
@@ -301,7 +562,7 @@ namespace Redux.Game_Server
                         var d1 = BaseMonster.ViewRange;
                         foreach (var t in Map.QueryScreen<Entity>(this))
                         {
-                            if (!CombatEngine.IsValidTarget(t) || (BaseMonster.Mesh != 900 && t.HasEffect(ClientEffect.Fly)) || t.HasStatus(ClientStatus.ReviveProtection))
+                            if (!CombatEngine.IsValidTarget(t) || (BaseMonster.Mesh != 900 && t.HasEffect(ClientEffect.Fly)) || t.HasStatus(Enum.ClientStatus.ReviveProtection))
                                 continue;
                             var d2 = Calculations.GetDistance(Location, t.Location);
                             if (d2 < d1)
@@ -345,7 +606,7 @@ namespace Redux.Game_Server
                 case MonsterMode.Walk:
                     {
                         var target = Map.Search<Entity>(TargetID);
-                        if (target == null || !target.Alive || (BaseMonster.Mesh != 900 && target.HasEffect(ClientEffect.Fly) || target.HasStatus(ClientStatus.ReviveProtection)))
+                        if (target == null || !target.Alive || (BaseMonster.Mesh != 900 && target.HasEffect(ClientEffect.Fly) || target.HasStatus(Enum.ClientStatus.ReviveProtection)))
                             Mode = MonsterMode.Idle;
                         else if (Common.Clock - LastMove > BaseMonster.MoveSpeed)
                         {

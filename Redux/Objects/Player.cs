@@ -12,6 +12,8 @@ using Redux.Managers;
 using Redux.Enum;
 using Redux.Packets.Game;
 using Redux.Structures;
+using System.Linq;
+using MySqlX.XDevAPI;
 
 namespace Redux.Game_Server
 {
@@ -200,6 +202,7 @@ namespace Redux.Game_Server
             {
                 if (Character == null)
                     return "NONE";
+                
                 return Character.Name;
             }
             set { Character.Name = value; SpawnPacket.Names.SetString(0, Character.Name); }
@@ -331,6 +334,7 @@ namespace Redux.Game_Server
             if (Character.HeavenBlessExpires > DateTime.Now)
                 bonus += .2;
             bonus += CombatStats.RainbowGemPct / 100.0;
+            
             Character.Experience += (ulong)((double)_exp * bonus) * Constants.EXP_RATE;
             var requires = ServerDatabase.Context.LevelExp.GetById(Character.Level);
             bool uplev = false;
@@ -422,6 +426,16 @@ namespace Redux.Game_Server
 
         #region Transformation Functions
         public bool IsMale { get { return Lookface % 10 > 2; } }
+
+        public bool FFA_Signed { get; internal set; }
+        public int totalHits { get; internal set; }
+
+
+        #region LOGGER_VARIABLE
+        public bool is_prof_xp_show = false;
+        
+        public bool is_spell_xp_show = false;
+        #endregion
 
         #region Set Disguise
         public override void SetDisguise(Database.Domain.DbMonstertype _mob, long _duration)
@@ -539,6 +553,7 @@ namespace Redux.Game_Server
                 //If doesnt have blue or black name and map isnt free PK
                 if (!HasEffect(ClientEffect.Blue) && !HasEffect(ClientEffect.Black) && Map.IsPKEnabled == true && !Map.IsFreePK && !Map.IsGuildMap)
                 {
+                    
 
                     short PkPoints = 10;
                     if (HasEffect(ClientEffect.Red))
@@ -573,9 +588,10 @@ namespace Redux.Game_Server
                         killer.AddEffect(ClientEffect.Red, ((killer.PK - 29) * 6) * 60000, true); //Calculates how long until they reach 99 PK points, and uses that as a timer
 
                     }
-                    killer.AddEffect(ClientEffect.Blue, 180000, true); //3 minutes blue name
+                    killer.AddEffect(ClientEffect.Blue, 60000, true); //3 minutes blue name
 
                 }
+
             }
 
             if (Pet != null)
@@ -682,7 +698,7 @@ namespace Redux.Game_Server
             Character.Hair = (ushort)((colour * 100) + Common.Random.Next(30, 51));
             #endregion
             Character.Level = 1;
-            Character.Money = 1000;
+            Character.Money = 10000;
             Character.CP = 0;
             Character.Experience = 0;
             Character.Map = 1002;
@@ -716,26 +732,66 @@ namespace Redux.Game_Server
                               Constants.STAT_MAXMANA_SPI * Spirit);
 
 
-            CreateDBItem(132005, ItemLocation.Armor);
+            //CreateDBItem(132005, ItemLocation.Armor);
+
+            //Taoist
             if (Character.Profession == 100)
             {
-                CreateDBItem(421301, ItemLocation.WeaponR);
-                for (var i = 0; i < 5; i++)
-                    CreateDBItem(1001000);
+                //CreateDBItem(421301, ItemLocation.WeaponR);
+                //for (var i = 0; i < 5; i++)
+                //    CreateDBItem(1001000);
+
+                //uid for CAP,BAG,BRACELET,BACKSWORD,ROBE,BOOTS
+                uint[] uids = { 114027, 121047, 152047, 421049, 134027, 160057 };
+
+                for (int i = 0; i < uids.Length; i++)
+                {
+                    CreateDBItem(uids[i], ItemLocation.Inventory, 0, 3, 255, 3, 3, true, 0);
+                }
+
+                //Learn Thunder and Cure Skill
                 ConquerSkill.Create(Character.UID, 1000, 0).Save();
                 ConquerSkill.Create(Character.UID, 1005, 0).Save();
 
             }
+            //TROJAN
+            else if (Character.Profession == 10)
+            {
+                //uid for CORO,NECKLACE,RING,CLUB,SWORD,ARMOR,BOOTS
+                uint[] uids = { 118027, 120047, 150057, 480059, 420019, 130027, 160057 };
+
+                for (int i = 0; i < uids.Length; i++)
+                {
+                    CreateDBItem(uids[i], ItemLocation.Inventory, 0, 3, 255, 13, 13, true, 0);
+                }
+
+            }
+            //WARRIOR
+            else if (Character.Profession == 20)
+            {
+                //uid for HELMET,NECKLACE,RING,POOLAXE,ARMOR,BOOTS
+                uint[] uids = { 111027, 120047, 150057, 530059, 131027, 160057 };
+
+                for (int i = 0; i < uids.Length; i++)
+                {
+                    CreateDBItem(uids[i], ItemLocation.Inventory, 0, 3, 255, 13, 13, true, 0);
+                }
+
+            }
+            //ARCHER
             else if (Character.Profession == 40)
             {
-                CreateDBItem(500301, ItemLocation.WeaponR);
-                for (var i = 0; i < 5; i++)
-                    CreateDBItem(1050000);
+                //uid for HAT,NECKLACE,RING,BOW,COAT,BOOTS
+                uint[] uids = { 113007, 120047, 150057, 500009, 133017, 160057 };
+
+                for (int i = 0; i < uids.Length; i++)
+                {
+                    CreateDBItem(uids[i], ItemLocation.Inventory, 0, 3, 255, 13, 13, true, 0);
+                }
             }
             else
                 CreateDBItem(410301, ItemLocation.WeaponR);
-            for (var i = 0; i < 5; i++)
-                CreateDBItem(1000000);
+           
 
             Database.ServerDatabase.Context.Characters.CreateEntry(Character);
         }
@@ -965,6 +1021,9 @@ namespace Redux.Game_Server
         #region CreateDBItem (offline item add)
         public void CreateDBItem(uint _staticID, ItemLocation location = ItemLocation.Inventory, byte _plus = 0, byte _bless = 0, byte _enchant = 0, byte _gem1 = 0, byte _gem2 = 0, bool _locked = false, byte _effect = 0)
         {
+            Console.WriteLine("Creating item {0}", _staticID);
+            Console.WriteLine("Counter ItemGenerator {0}", (uint)Common.ItemGenerator.Counter);
+
             var item = new ConquerItem((uint)Common.ItemGenerator.Counter, _staticID, _plus, _bless, _enchant, _gem1, _gem2, _locked, _effect);
             item.Location = location;
             Database.ServerDatabase.Context.Items.CreateNewItem(UID, item);
@@ -1012,8 +1071,12 @@ namespace Redux.Game_Server
             }
             if (!Constants.DEBUG_MODE && Common.Clock - LastPingReceived > Common.MS_PER_SECOND * 45)
             { Disconnect(); Console.WriteLine("Connection timeout for {0} with {1} ms latency", Name, Common.Clock - LastPingReceived); return; }
+            
             if (Alive)
             {
+                //var client = PlayerManager.GetUser(Character.UID);
+               // client.SendMessage("Hey it's me " + client.Name + ". I'm VIP level " + client.Account.VipLevel, ChatType.System);
+                
                 if ((Character.HeavenBlessExpires > DateTime.Now && stamina < 150) || stamina < 100)
                 {
                     byte toGain = 3;
@@ -1028,23 +1091,31 @@ namespace Redux.Game_Server
                         AddEffect(ClientEffect.XpStart, 20000);
                     LastXpUp = Common.Clock;
                 }
+
+                
                 if (PK > 0 && Common.Clock - LastPkPoint > Common.MS_PER_MINUTE * 6)//If last Pk point has been 6 minutes
                 {
                     PK -= 1;//Minus 1 PK point
                     LastPkPoint = Common.Clock;//Set last reduction time to now
                     Send(UpdatePacket.Create(UID, UpdateType.Pk, (ulong)PK));
-
-                    //If Between 30 and 99 and does not have Red Name.....then Add redname
-                    if (PK >= 30 && PK < 100 && !HasEffect(ClientEffect.Red))
-                    {
-                        RemoveEffect(ClientEffect.Black);
-                        AddEffect(ClientEffect.Red, ((PK - 29) * 6) * 60000, true);//Adds red name
-                    }
-
-                    //If under 30 PK, remove redname
-                    if (PK < 30 && HasEffect(ClientEffect.Red))
-                        RemoveEffect(ClientEffect.Red);
                 }
+
+                //If pk pts is 100 up and does not have Black Name.....then Add BlackName
+                if (PK >= 100 && !HasEffect(ClientEffect.Black))
+                {
+                    AddEffect(ClientEffect.Black, ((PK - 99) * 6) * 60000, true);//Adds Black name
+                }
+
+                //If Between 30 and 99 and does not have Red Name.....then Add redname
+                if (PK >= 30 && PK < 100 && !HasEffect(ClientEffect.Red))
+                {
+                    RemoveEffect(ClientEffect.Black);
+                    AddEffect(ClientEffect.Red, ((PK - 29) * 6) * 60000, true);//Adds red name
+                }
+
+                //If under 30 PK, remove redname
+                if (PK < 30 && HasEffect(ClientEffect.Red))
+                    RemoveEffect(ClientEffect.Red);
 
                 if (Mining && Common.Clock > NextMine && Map.MapInfo.Type.HasFlag(MapTypeFlags.MineEnable))
                 {
@@ -1155,6 +1226,31 @@ namespace Redux.Game_Server
                 }
                 #endregion
             }
+
+            #region DEAD CHARACTER
+            if (!Alive)
+            {
+                RemoveEffect(ClientEffect.Blue);
+                //If pk pts is 100 up and does not have Black Name.....then Add BlackName
+                if (PK >= 100 && !HasEffect(ClientEffect.Black))
+                {
+                    AddEffect(ClientEffect.Black, ((PK - 99) * 6) * 60000, true);//Adds Black name
+                }
+
+                //If Between 30 and 99 and does not have Red Name.....then Add redname
+                if (PK >= 30 && PK < 100 && !HasEffect(ClientEffect.Red))
+                {
+                    RemoveEffect(ClientEffect.Black);
+                    AddEffect(ClientEffect.Red, ((PK - 29) * 6) * 60000, true);//Adds red name
+                }
+
+                //If under 30 PK, remove redname
+                if (PK < 30 && HasEffect(ClientEffect.Red))
+                    RemoveEffect(ClientEffect.Red);
+            }
+            #endregion
+
+
         }
         #endregion
 

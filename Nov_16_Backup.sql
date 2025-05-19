@@ -19507,7 +19507,7 @@ DROP PROCEDURE IF EXISTS `DeleteUserGuildAttr`;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteUserGuildAttr`(IN userId INT unsigned, IN guildId INT unsigned, IN guildRank SMALLINT unsigned)
 BEGIN
-		DELETE FROM guildattr WHERE id=userId AND guild_id=guildId AND rank!=guildRank LIMIT 1;
+		DELETE FROM guildattr WHERE id=userId AND guild_id=guildId AND `rank`!=guildRank LIMIT 1;
 	END
 ;;
 DELIMITER ;
@@ -19519,7 +19519,7 @@ DROP PROCEDURE IF EXISTS `GetGuildMemberList`;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `GetGuildMemberList`(IN guildId INT unsigned)
 BEGIN
-		SELECT u.Name AS Name, g.rank AS Rank, u.Level AS Level, g.donate_silver AS Donation FROM guildattr AS g LEFT JOIN characters AS u ON u.UID=g.id WHERE g.guild_id=guildId && u.UID IS NOT NULL ORDER BY g.rank DESC, u.Level DESC, u.Name;
+		SELECT u.Name AS Name, g.rank AS `Rank`, u.Level AS Level, g.donate_silver AS Donation FROM guildattr AS g LEFT JOIN characters AS u ON u.UID=g.id WHERE g.guild_id=guildId && u.UID IS NOT NULL ORDER BY g.rank DESC, u.Level DESC, u.Name;
 	END
 ;;
 DELIMITER ;

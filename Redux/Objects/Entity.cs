@@ -20,6 +20,7 @@ namespace Redux.Game_Server
         public Point Location { get; set; }
         public Map Map { get; set; }
         public uint UID { get; set; }
+
         public CombatStatistics CombatStats;
         public ConcurrentDictionary<Enum.ClientEffect, long> ClientEffects { get; private set; }
         public ConcurrentDictionary<Enum.ClientStatus, Structures.ClientStatus> ClientStatuses { get; private set; }
@@ -101,18 +102,33 @@ namespace Redux.Game_Server
         public virtual uint CalculatePhysicalDamage(Entity _target, DbMagicType _spell, bool _canDodge = false)
         {
             var dmg = Common.Random.Next(CombatStats.MinimumDamage, CombatStats.MaximumDamage) * (CombatStats.BonusAttackPct + CombatStats.DragonGemPct) / 100;
+            if (Constants.FBSSMap.Contains(_target.MapID))
+                dmg = 0;
+
             if (_target is Monster)
-                dmg *= GetLevelBonusDamageFactor(Level, _target.Level);
+            {
+                var x = _target as Monster;
+                if (x.BaseMonster.Name == "") dmg = 0;
+                if (x.BaseMonster.Name == "IcySerpent")
+                {
+
+                }
+                else
+                {
+                    dmg *= GetLevelBonusDamageFactor(Level, _target.Level);
+                }
+            }
+                
             if (_spell != null && _spell.Power > 0)
                 dmg = (int)((double)dmg * (double)(_spell.Power % 1000) / (double)100);
             if (HasEffect(ClientEffect.Superman))
                 if (_target is Monster)
-                    dmg *= 10;
+                    dmg *= 6;
                 else
                     dmg *= 2;
             dmg = dmg * (100 - _target.CombatStats.BlessPct) / 100;
             dmg = dmg * (100 - _target.CombatStats.TortGemPct) / 100;
-            dmg -= _target.CombatStats.Defense * CombatStats.BonusDefensePct / 100;
+            dmg -= _target.CombatStats.Defense * _target.CombatStats.BonusDefensePct / 100; //PLEASE RE-CHECK
             if (dmg < 1)
                 dmg = 1;
             if (_canDodge && !Common.PercentSuccess(Math.Max(40, 90 - _target.CombatStats.Dodge + CombatStats.Accuracy)))
@@ -126,8 +142,16 @@ namespace Redux.Game_Server
             if (_spell == null)
                 return 1;
             var dmg = (CombatStats.MagicDamage + _spell.Power) * (200 + CombatStats.PhoenixGemPct) / 100;
+            
+            if (Constants.FBSSMap.Contains(_target.MapID))
+                dmg = 0;
+
             if (_target is Monster)
+            {
+                //Console.WriteLine("It's a SKILL!");
                 dmg *= GetLevelBonusDamageFactor(Level, _target.Level);
+            }
+               
             dmg = dmg * (100 - _target.CombatStats.MagicResistance) / 100;
             dmg -= _target.CombatStats.MagicDefense;
             if (dmg < 0)
@@ -162,10 +186,37 @@ namespace Redux.Game_Server
                     //If both are players
                     if (PlayerManager.Players.ContainsKey(_attacker) && (PlayerManager.Players.ContainsKey(this.UID)))
                     {
+                        
                         var attacker = Map.Search<Player>(_attacker);
+                        var recvr = Map.Search<Player>(this.UID);
                         if (!this.HasEffect(ClientEffect.Blue) && !this.HasEffect(ClientEffect.Black) && this.Map.IsPKEnabled == true && !this.Map.IsFreePK && !this.Map.IsGuildMap)
                         {
                             attacker.AddEffect(ClientEffect.Blue, 10000); //10 second blue name
+                        }
+
+                        Entity receiver = this;
+                       
+                        if (Constants.FBSSMap.Contains(receiver.MapID) && recvr.FFA_Signed == true)
+                        {
+
+                            attacker.totalHits += 1;
+                            
+                            receiver.SendToScreen(new Packets.Game.TalkPacket(ChatType.SynWarFirst, "Tournament Title: Free For All "));
+                            receiver.SendToScreen(new Packets.Game.TalkPacket(ChatType.SynWarNext, "Total hits: " + attacker.totalHits + "/" + Constants.FFA_WINNER_SCORE));
+                            attacker.Stamina = 100;
+                            if (attacker.totalHits >= Constants.FFA_WINNER_SCORE)
+                            {
+                                Managers.PlayerManager.SendToServer(new TalkPacket(ChatType.Broadcast, attacker.Name + " has won the Free for all Tournament!"));
+                                attacker.ChangeMap(1002, 438, 362);
+                                attacker.Money += Constants.FFA_WINNER_REWARD;
+                                attacker.SendMessage("You won the event. " + Constants.FFA_WINNER_REWARD + " silver is the reward for the Free For All Tournament. Congratulations!",ChatType.GM);
+                                attacker.SendToScreen(StringsPacket.Create(attacker.UID, StringAction.Fireworks, "Congratulations!!!"), true);
+                                attacker.PkMode = PKMode.Capture;
+                                Events.FreeForAll.EndEvent(); //Stop the FFA Event.
+                                attacker.FFA_Signed = false;
+                                attacker.totalHits = 0;
+                            }
+
                         }
 
                     }
@@ -324,6 +375,8 @@ namespace Redux.Game_Server
         {
             get { return HasEffect(ClientEffect.Superman) || HasEffect(ClientEffect.Cyclone); }
         }
+
+        
         #endregion
 
         #region Status Handling

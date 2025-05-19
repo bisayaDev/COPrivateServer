@@ -16,6 +16,7 @@ namespace Redux.Packets.Game
 
         public static implicit operator NpcPacket(byte* ptr)
         {
+            Console.WriteLine((byte) ptr);
             var packet = new NpcPacket();
             packet.UID = *((uint*)(ptr + 4));
             packet.Data = *((uint*)(ptr + 8));

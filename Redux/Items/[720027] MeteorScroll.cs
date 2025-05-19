@@ -17,7 +17,10 @@ namespace Redux.Items
         public override void Run(Player _client, ConquerItem _item) 
         {
         	if(_client.Inventory.Count > 30)
-        		return;
+            {
+                _client.SendMessage("Warning: Not enought inventory space.");
+                return;
+            }
             _client.DeleteItem(_item);
         	for(var i = 0; i < 10; i++)
         		_client.CreateItem(Constants.METEOR_ID);

@@ -8,6 +8,9 @@ using Redux.Database;
 using Redux.Database.Domain;
 using Redux.Database.Repositories;
 using NHibernate.Mapping;
+using Redux.Npcs;
+using System.Net.Sockets;
+using Redux.Events;
 
 namespace Redux
 {
@@ -41,7 +44,7 @@ namespace Redux
                 {"effect", Process_Effect},
                 {"skill", Process_Skill},
                 {"prof", Process_Prof},
-                {"map", Process_Map},
+                {"move", Process_Move},
                 {"debug", Process_Debug},
                 {"transform", Process_Transform},
                 {"mapflag", Process_MapFlag},
@@ -65,6 +68,13 @@ namespace Redux
                 {"addspawn", Process_AddSpawn},
                 {"trojpack", Process_TrojanPack},
                 {"archpack", Process_ArcherPack},
+                {"wh", Process_Warehouse },
+                {"vip", Process_VipStatus },
+                {"ffa", Process_FreeForAll },
+                {"gui", Process_GUI },
+                {"map", Process_Map },
+                {"showxp", Process_Show },
+                
                 
             };
         }
@@ -271,7 +281,7 @@ namespace Redux
             else
                 client.SendMessage("Error: Format should be /prof id {lvl}");
         }
-        private static void Process_Map(Player client, string[] command)
+        private static void Process_Move(Player client, string[] command)
         {
             if (client.Account.Permission < PlayerPermission.GM)
                 return;
@@ -421,8 +431,8 @@ namespace Redux
                 npc.Type = (NpcType)flag;
                 npc.Mesh = mesh;
                 ServerDatabase.Context.Npcs.Add(npc);
-                client.Map.Insert(new Npc(npc, client.Map));                    
-
+                client.Map.Insert(new Npc(npc, client.Map));
+                client.SendMessage("NPC Created. ID: " + npc.UID);
             }
             
             //TODO: FINISH
@@ -640,8 +650,6 @@ namespace Redux
             if (client.Account.Permission < PlayerPermission.GM)
                 return;
 
-            if (client.Account.Permission < PlayerPermission.GM)
-                return;
             if (command.Length < 2)
                 client.SendMessage("Error: Proper format is /goto PlayerName");
             else
@@ -788,6 +796,7 @@ namespace Redux
             client.CombatManager.AddOrUpdateSkill(SkillID.FastBlade, 4);
             client.CombatManager.AddOrUpdateSkill(SkillID.SpiritHealing, 2);
             client.CombatManager.AddOrUpdateSkill(SkillID.Robot, 2);
+            client.Strength = 176;
 
         }
 
@@ -845,6 +854,227 @@ namespace Redux
             client.CombatManager.AddOrUpdateSkill(SkillID.SpiritHealing, 2);
 
         }
+
+        private static void Process_Warehouse(Player client, string[] command)
+        {
+            if (client.Account.Permission < PlayerPermission.GM)
+                return;
+            uint val;
+            
+            if (command.Length > 1){
+                switch (command[1].ToLower())
+                {
+                    case "tc":
+                        val = 40;
+                        break;
+                    case "pc":
+                        val = 48;
+                        break;
+                    case "ac":
+                        val = 47;
+                        break;
+                    case "dc":
+                        val = 46;
+                        break;
+                    case "bi":
+                        val = 45;
+                        break;
+                    case "mk":
+                        val = 44;
+                        break;
+                    default:
+                        val = 255;
+                        break;
+                }
+                
+                if (val == 255) 
+                   client.SendMessage("Warehouse not found. It should be tc,pc,ac,dc,bi or mk.");
+                else
+                {
+                    client.SendMessage("Remote Warehouse is only available on same city.");
+                    Npcs.Manager.ProcessNpc(client, val, 0);
+                }
+ 
+            }
+            else { 
+                client.SendMessage("Error: Format should be /wh {xx}");
+            }
+        }
+
+        private static void Process_VipStatus(Player client, string[] command)
+        {
+            client.SendMessage("VIP Level: " + client.Account.VipLevel + " for 30 days.", ChatType.System);
+            if (client.Account.Permission < PlayerPermission.GM)
+                return;
+            if (command.Length > 1)
+            {
+                switch (command[1])
+                {
+                    case "0":
+                        client.Account.VipLevel = Enum.PlayerVipLevel.Level0;
+                        ServerDatabase.Context.Accounts.Update(client.Account);
+                        client.SendToScreen(StringsPacket.Create(client.UID, StringAction.Fireworks, "Congratulations!!!"), true);
+                        break;
+                    case "1":
+                        client.Account.VipLevel = Enum.PlayerVipLevel.Level1;
+                        ServerDatabase.Context.Accounts.Update(client.Account);
+                        client.SendToScreen(StringsPacket.Create(client.UID, StringAction.Fireworks, "Congratulations!!!"), true);
+                        break;
+                    case "2":
+                        client.Account.VipLevel = Enum.PlayerVipLevel.Level2;
+                        ServerDatabase.Context.Accounts.Update(client.Account);
+                        client.SendToScreen(StringsPacket.Create(client.UID, StringAction.Fireworks, "Congratulations!!!"), true);
+                        break;
+                    case "3":
+                        client.Account.VipLevel = Enum.PlayerVipLevel.Level3;
+                        ServerDatabase.Context.Accounts.Update(client.Account);
+                        client.SendToScreen(StringsPacket.Create(client.UID, StringAction.Fireworks, "Congratulations!!!"), true);
+                        break;
+                    case "4":
+                        client.Account.VipLevel = Enum.PlayerVipLevel.Level4;
+                        ServerDatabase.Context.Accounts.Update(client.Account);
+                        client.SendToScreen(StringsPacket.Create(client.UID, StringAction.Fireworks, "Congratulations!!!"), true);
+                        break;
+                    case "5":
+                        client.Account.VipLevel = Enum.PlayerVipLevel.Level5;
+                        ServerDatabase.Context.Accounts.Update(client.Account);
+                        client.SendToScreen(StringsPacket.Create(client.UID, StringAction.Fireworks, "Congratulations!!!"), true);
+                        break;
+                    case "6":
+                        client.Account.VipLevel = Enum.PlayerVipLevel.Level6;
+                        ServerDatabase.Context.Accounts.Update(client.Account);
+                        client.SendToScreen(StringsPacket.Create(client.UID, StringAction.Fireworks, "Congratulations!!!"), true);
+                        break;
+                    case "7":
+                        client.Account.VipLevel = Enum.PlayerVipLevel.Level7;
+                        ServerDatabase.Context.Accounts.Update(client.Account);
+                        client.SendToScreen(StringsPacket.Create(client.UID, StringAction.Fireworks, "Congratulations!!!"), true);
+                        break;
+                }
+                client.SendMessage("VIP Level: " + client.Account.VipLevel + " for 30 days.", ChatType.System);
+            }
+
+        }
+
+        private static void Process_FreeForAll(Player client, string[] command)
+        {
+            if (client.Account.Permission < PlayerPermission.GM)
+                return;
+            if (command.Length > 1)
+            {
+                switch (command[1].ToLower())
+                {
+                    case "run":
+                        FreeForAll.StartEvent();
+                        client.SendMessage("FFA RUNNING.", ChatType.System);
+                        break;
+                    case "start":
+                        FreeForAll.Send();
+                        client.SendMessage("FFA STARTED.", ChatType.System);
+                        break;
+                    case "end":
+                        FreeForAll.EndEvent();
+                        client.SendMessage("FFA ENDED.", ChatType.System);
+                        break;
+                }
+            }
+        }
+
+        private static void Process_GUI(Player client, string[] command)
+        {
+            if (client.Account.Permission < PlayerPermission.GM) return;
+
+            uint cmd;
+            uint.TryParse(command[1], out cmd);
+
+            GeneralActionPacket pack = new GeneralActionPacket();
+            pack.UID = client.Account.UID;
+            pack.Data1 = cmd;
+            pack.Action = Enum.DataAction.PostCmd;
+            pack.Data2Low = client.X;
+            pack.Data2High = client.Y;
+            client.Send(pack);
+            
+            return;
+        }
+
+
+        private static void Process_Map(Player client, string[] command)
+        {
+            PlayerVipLevel vip_level = client.Account.VipLevel;
+
+            if (command.Length > 1)
+            {
+                switch (command[1].ToLower())
+                {
+                    case "tc":
+                        if(vip_level >= PlayerVipLevel.Level1)
+                        {
+                            client.ChangeMap(1002);
+                        }
+                        break;
+                    case "pc":
+                        if (vip_level >= PlayerVipLevel.Level1)
+                        {
+                            client.ChangeMap(1011);
+                        }
+                        break;
+                    case "ac":
+                        if (vip_level >= PlayerVipLevel.Level2)
+                        {
+                            client.ChangeMap(1020);
+                        }
+                        break;
+                    case "dc":
+                        if (vip_level >= PlayerVipLevel.Level3)
+                        {
+                            client.ChangeMap(1000);
+                        }
+                        break;
+                    case "bi":
+                        if (vip_level >= PlayerVipLevel.Level4)
+                        {
+                            client.ChangeMap(1015);
+                        }
+                        break;
+                    case "am":
+                        if (vip_level >= PlayerVipLevel.Level7)
+                        {
+                            client.ChangeMap(1214, 805, 1195);
+                        }
+                        break;
+
+
+                }
+            }
+
+            else
+                client.SendMessage("Error: Format should be /map {id} {x} {y}");
+        }
+
+        private static void Process_Show(Player client, string[] command)
+        {
+            PlayerVipLevel vip_level = client.Account.VipLevel;
+
+            if (command.Length > 1)
+            {
+                switch (command[1].ToLower())
+                {
+                    case "prof":
+                        client.is_prof_xp_show = !client.is_prof_xp_show;
+                        client.SendMessage("Proficiency Exp Logs is set to " + client.is_prof_xp_show);
+                        break;
+                    case "spell":
+                        client.is_spell_xp_show = !client.is_spell_xp_show;
+                        client.SendMessage("Proficiency Exp Logs is set to " + client.is_spell_xp_show);
+                        break;
+                }
+            }
+            else
+                client.SendMessage("Opss. Do you mean '/showxp prof' or '/showxp spell'.}");
+        }
+
     }
+    
 
 }

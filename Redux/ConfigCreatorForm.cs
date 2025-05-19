@@ -46,8 +46,7 @@ namespace Redux
             writer.WriteLine("    <property name=\"connection.connection_string\">");
             writer.WriteLine("      Database=" + DbNameTextBox.Text + ";Data Source=localhost;User Id=" + DbUserTextBox.Text + ";Password=" + DbPassTextbox.Text);
             writer.WriteLine("    </property>");
-            writer.WriteLine("    <property name=\"dialect\">NHibernate.Dialect.MySQLDialect</property>");
-            writer.WriteLine("    <property name=\"proxyfactory.factory_class\">NHibernate.ByteCode.LinFu.ProxyFactoryFactory, NHibernate.ByteCode.LinFu</property>");
+            writer.WriteLine("    <property name=\"dialect\">NHibernate.Dialect.MySQL5Dialect</property>");
             writer.WriteLine("  </session-factory>");
             writer.WriteLine("</hibernate-configuration>");
             writer.Close();
@@ -55,5 +54,9 @@ namespace Redux
             Close();
         }
 
+        private void MachineNameTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

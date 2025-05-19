@@ -4,43 +4,76 @@ namespace Redux
     public static class Constants
     {
         public const int EXP_BALL_LIMIT = 10;
-        public const uint EMERALD_ID = 1080001, DB_SCROLL_ID = 720028, DRAGONBALL_ID = 1088000, METEOR_SCROLL_ID = 720027, METEOR_ID = 1088001, METEOR_TEAR_ID = 1088002, MOONBOX_ID = 721020, CELESTIAL_STONE_ID = 721259;
-        public const bool IsSameSexMarriageAllowed = true;
-        public const int EXP_RATE = 10,
-                              PROF_RATE = 5,
-                              SKILL_RATE = 5,
-                              GOLD_RATE = 5;
+        public const uint 
+            EMERALD_ID = 1080001, 
+            DB_SCROLL_ID = 720028, 
+            DRAGONBALL_ID = 1088000, 
+            METEOR_SCROLL_ID = 720027, 
+            METEOR_ID = 1088001, 
+            METEOR_TEAR_ID = 1088002, 
+            MOONBOX_ID = 721020, 
+            CELESTIAL_STONE_ID = 721259,
+            LANTERNTOKEN_ID = 722825,
+            GALAXYTOKEN_ID = 723020;
+            
 
-        public const double SOCKET_RATE = .5,
+
+            
+
+        public const bool IsSameSexMarriageAllowed = true;
+
+        public const int
+            FFA_WINNER_SCORE = 100,
+            FFA_WINNER_REWARD = 1000000,
+            EXP_RATE = 10,
+            PROF_RATE = 10,
+            SKILL_RATE = 10,
+            GOLD_RATE = 5,
+            TOKEN_DROP_RATE = 10;
+        
+
+        public const double 
+            SOCKET_RATE = .3,
+            SOCKET_DROP = .5,
             CHANCE_REFINED = 10.0,
             CHANCE_UNIQUE = 6.0,
-            CHANCE_ELITE = 1.0,
-            CHANCE_SUPER = 1,
-            CHANCE_PLUS = 2.0,
-            CHANCE_METEOR = 2,
-            CHANCE_DRAGONBALL = 1,
+            CHANCE_ELITE = 5.0,
+            CHANCE_SUPER = 2.0,
+            CHANCE_PLUS = 5.0,
+            CHANCE_METEOR = 3.0,//1
+            CHANCE_DRAGONBALL = 0.5,//.1
             CHANCE_POTION = 4,
             CHANCE_REFINED_GEM = 10,
+            CHANCE_NEGATIVE_1 = .5, 
+            CHANCE_NEGATIVE_3 = .1, 
+            CHANCE_NEGATIVE_5 = .05,
             CHANCE_SUPER_GEM = 1;
+            
 
         public static bool DEBUG_MODE;
-        public const byte RESPONSE_INVALID = 1,
-                          RESPONSE_VALID = 2,
-                          RESPONSE_BANNED = 12,
-                          RESPONSE_INVALID_ACCOUNT = 57;
-        public const int IPSTR_SIZE = 16,
-                            MACSTR_SIZE = 12,
-                            MAX_NAMESIZE = 16,
-                            MAX_BROADCASTSIZE = 80,
-                            MAX_USERFRIENDSIZE = 50,
-                            MAX_ENEMYSIZE = 10,
-                            MAX_TRADEITEMS = 20,
-                            MAX_TRADEMONEY = 100000000,
-                            MAX_TEAMAMOUNT = 5,
-                            MAX_ADDITION = 12,
-                            MAX_GUILDALLYSIZE = 5,
-                            MAX_GUILDENEMYSIZE = 5;
-        public const ushort BOOTH_LOOK = 407;
+        public const byte 
+            RESPONSE_INVALID = 1,
+            RESPONSE_VALID = 2,
+            RESPONSE_BANNED = 12,
+            RESPONSE_INVALID_ACCOUNT = 57;
+
+        public const int 
+            IPSTR_SIZE = 16,
+            MACSTR_SIZE = 12,
+            MAX_NAMESIZE = 16,
+            MAX_BROADCASTSIZE = 80,
+            MAX_USERFRIENDSIZE = 50,
+            MAX_ENEMYSIZE = 10,
+            MAX_TRADEITEMS = 20,
+            MAX_TRADEMONEY = 100000000,
+            MAX_TEAMAMOUNT = 5,
+            MAX_ADDITION = 12,
+            MAX_GUILDALLYSIZE = 5,
+            MAX_GUILDENEMYSIZE = 5;
+
+        public const ushort 
+            BOOTH_LOOK = 407;
+
         public const ushort
             MSG_REGISTER = 1001,
             MSG_TALK = 1004,
@@ -80,7 +113,8 @@ namespace Redux
             MSG_MENTORINFO = 2066,
             MSG_MENTORPRIZE = 2067;
 
-        public const int TIME_ADJUST_HOUR = -5,
+        public const int 
+            TIME_ADJUST_HOUR = -5,
             TIME_ADJUST_MIN = 0,
             TIME_ADJUST_SEC = 0;
 
@@ -89,15 +123,17 @@ namespace Redux
         public static uint MINUTES_BANNED_BRUTEFORCE = 30;
         public static uint MAX_CONNECTIONS_PER_MINUTE = 10;
 
-        public static string GAME_IP = "0.0.0.0",
-                             SERVER_NAME = "Redux_Beta";
+        public static string 
+            GAME_IP = "0.0.0.0",
+            SERVER_NAME = "DFEC-CO Beta";
 
-        public const string SYSTEM_NAME = "SYSTEM",
-                            ALLUSERS_NAME = "ALLUSERS",
-                            REPLY_OK_STR = "ANSWER_OK",
-                            REPLAY_AGAIN_STR = "ANSWER_AGAIN",
-                            NEW_ROLE_STR = "NEW_ROLE",
-                            DEFAULT_MATE = "None";
+        public const string 
+            SYSTEM_NAME = "SYSTEM",
+            ALLUSERS_NAME = "ALLUSERS",
+            REPLY_OK_STR = "ANSWER_OK",
+            REPLAY_AGAIN_STR = "ANSWER_AGAIN",
+            NEW_ROLE_STR = "NEW_ROLE",
+            DEFAULT_MATE = "None";
 
         public const int STAT_MAXLIFE_STR = 3, STAT_MAXLIFE_AGI = 3, STAT_MAXLIFE_VIT = 24, STAT_MAXLIFE_SPI = 3; 
         public const int STAT_MAXMANA_STR = 0, STAT_MAXMANA_AGI = 0, STAT_MAXMANA_VIT = 0, STAT_MAXMANA_SPI = 5;
@@ -125,5 +161,11 @@ namespace Redux
 
 
         public static readonly string[] GemEffectsByID = new string[] { "phoenix", "goldendragon", "lounder1", "rainbow", "goldenkylin", "purpleray", "moon", "recovery", };
+
+        public static readonly System.Collections.Generic.List<ulong> FBSSMap = new System.Collections.Generic.List<ulong>()
+            {
+                1509,
+                1508
+            };
     }
 }

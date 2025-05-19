@@ -51,7 +51,7 @@ namespace Redux.Npcs
                         AddOption("Spear ", 160);
                         AddOption("Wand ", 161);
                         AddOption("Hook ", 30);
-                        AddOption("Whip ", 41);
+                        AddOption("Whip ", 40);
                         AddOption("Next Page", 3);
                         AddOption("I changed my mind. ", 255);
 

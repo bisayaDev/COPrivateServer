@@ -22,6 +22,9 @@ namespace Redux
             DeltaY = new sbyte[] { 1, 1, 0, -1, -1, -1, 0, 1, 0 };
             _trojanLifeBonus = new[] { 100, 105, 108, 110, 112, 115 };
             _taoistManaBonus = new[] { 100, 100, 300, 400, 500, 600 };
+
+            ItemGenerator = new ThreadSafeCounter();
+
             MapService = new TinyMapServer
             {
                 ConquerDirectory = "",

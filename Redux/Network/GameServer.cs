@@ -733,11 +733,14 @@ namespace Redux.Game_Server
                         if (client.Shop.Items.ContainsKey(packet.UID))
                             return;
                         var toAdd = client.GetItemByUID(packet.UID);
-                        if (toAdd != null && toAdd.IsSellable)
+                        if (toAdd != null && toAdd.IsSellable && (toAdd.IsTradeable || !toAdd.IsDropable))
                         {
                             var saleItem = new SaleItem(toAdd, packet.ID, false);//data1
                             client.Shop.Items.TryAdd(toAdd.UniqueID, saleItem);
                             client.Send(packet);
+                        }else
+                        {
+                            client.SendMessage("Can not vend item" + toAdd.BaseItem.Name + ".", ChatType.System);
                         }
                         break;
                     }
@@ -745,7 +748,9 @@ namespace Redux.Game_Server
                 #region CP Item
                 case ItemAction.BoothAddCP:
                     {
-                        if (client.Shop == null || !client.Shop.Vending)
+                        var toAdd = client.GetItemByUID(packet.UID);
+                        client.SendMessage("Can not vend item " + toAdd.BaseItem.Name + " with CP currency.", ChatType.System);
+                        /*if (client.Shop == null || !client.Shop.Vending)
                             return;
                         if (client.Shop.Items.ContainsKey(packet.UID))
                             return;
@@ -755,7 +760,8 @@ namespace Redux.Game_Server
                             var saleItem = new SaleItem(toAdd, packet.ID, true);
                             client.Shop.Items.TryAdd(toAdd.UniqueID, saleItem);
                             client.Send(packet);
-                        }
+                        }*/
+
                         break;
                     }
                 #endregion
@@ -879,8 +885,8 @@ namespace Redux.Game_Server
                 #endregion
                 #region Request Warehouse
                 case ItemAction.ViewWarehouse:
-                    if (!client.VisibleObjects.ContainsKey(packet.UID))
-                        return;
+                    /*if (!client.VisibleObjects.ContainsKey(packet.UID))
+                        return;*/
                     packet.ID = client.WhMoney;
                     client.Send(packet);
                     break;
@@ -1025,6 +1031,13 @@ namespace Redux.Game_Server
                 case ItemAction.DropItem:
                     {
                         var item = client.GetItemByUID(packet.UID);
+                        if (item == null) break;
+                        if (!item.IsTradeable)
+                        {
+                            client.SendMessage("Item " + item.BaseItem.Name + " is not droppable.",ChatType.System);
+                            break;
+                        }
+
                         if (item != null && item.IsDropable)
                         {
                             var loc = client.Location;
@@ -1073,7 +1086,7 @@ namespace Redux.Game_Server
                                     client.Money -= toBuy.Price;
                                 else if (shopItem.CurrencyType == CurrencyType.CP && client.CP >= toBuy.PriceCP) {
                                     // client.CP -= toBuy.PriceCP;
-                                    client.Send(new TalkPacket(ChatType.Talk, "CPs is not allowed in this server."));
+                                    client.Send(new TalkPacket(ChatType.Talk, "CPs is not allowed in this server. SHOP: " + packet.UID));
                                     success = false;
                                 }
                               

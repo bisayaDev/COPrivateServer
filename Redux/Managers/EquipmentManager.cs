@@ -55,6 +55,9 @@ namespace Redux.Managers
                 case 134:
                     loc = 3;
                     break;
+                case 137:
+                    loc = 9;
+                    break;
                 case 410:
                 case 420:
                 case 421:

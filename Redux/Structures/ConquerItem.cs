@@ -153,11 +153,16 @@ namespace Redux.Structures
             
         }
 
-        public ushort EquipmentLevel
+        /*public ushort EquipmentLevel
         {
             get { return (ushort)((staticID % 1000) / 10); }
+        }*/
+        public ushort EquipmentLevel
+        {
+            get { 
+                return (ushort)BaseItem.LevelReq; 
+            }
         }
-
         public byte EquipmentQuality
         {
             get { return (byte)(staticID % 10); }
@@ -191,6 +196,19 @@ namespace Redux.Structures
         public bool IsHelmet { get { return EquipmentSort == 1 || EquipmentSort == 4; } }
         public bool IsArmor { get { return EquipmentSort == 3; } }
         public bool IsShield { get { return EquipmentType == 900; } }
+
+        public bool IsWeapon
+        {
+            get
+            {
+                return
+            ((EquipmentType == 410) || (EquipmentType == 420) || (EquipmentType == 421) || (EquipmentType == 430) ||
+            (EquipmentType == 440) || (EquipmentType == 450) || (EquipmentType == 460) || (EquipmentType == 480) ||
+            (EquipmentType == 490) || (EquipmentType == 500) || (EquipmentType == 510) || (EquipmentType == 530) ||
+            (EquipmentType == 540) || (EquipmentType == 560) || (EquipmentType == 561) || (EquipmentType == 562) ||
+            (EquipmentType == 580));
+            }
+        }
 
         #region Calculate Next Item ID (Dragon Ball Upgrade)
         public uint GetNextItemQuality()
@@ -233,6 +251,7 @@ namespace Redux.Structures
         {
             //Quality too low
             if (EquipmentQuality < 3)
+                
                 return staticID;
             //Level too high
             switch (EquipmentLevel)

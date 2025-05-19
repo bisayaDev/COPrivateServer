@@ -11,6 +11,7 @@ namespace Redux.Database.Domain
         public virtual int EmailStatus { get; set; }
         public virtual string Question { get; set; }
         public virtual string Answer { get; set; }
+        public virtual int hasClaimReward { get; set; }
         public virtual PlayerVipLevel VipLevel { get; set; }
         public virtual PlayerPermission Permission { get; set; }
         public virtual uint Token { get; set; }

@@ -14,11 +14,14 @@ namespace Redux.Npcs
         {
             try
             {
+                
                 var type = Type.GetType("Redux.Npcs.NPC_" + _npc);
                 INpc npc = Activator.CreateInstance(type,_client) as INpc;
 
-                if (!_client.VisibleObjects.ContainsKey(_npc) && !npc.IsGlobal)
-                { Console.WriteLine("{0} trying to use non global npc {1} while not on screen!", _client.Name, _npc); return; }
+                //Commented out this condition below to enable accessing remote Warehouse anywhere.
+                /*if (!_client.VisibleObjects.ContainsKey(_npc) && !npc.IsGlobal)
+                    { Console.WriteLine("{0} trying to use non global npc {1} while not on screen!", _client.Name, _npc); return; }*/
+
                 npc.Run(_client, _linkback);
                 _client.CurrentNPC = npc;
             }

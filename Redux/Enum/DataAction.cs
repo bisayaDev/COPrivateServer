@@ -51,6 +51,8 @@
         AbortMagic = 163,
         MapARGB = 164,
         MobDropsDragonball = 165,
-        ObserveFriend = 310
+        ObserveFriend = 310,
+        PostCmd = 116
+        
     }
 }

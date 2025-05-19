@@ -71,6 +71,7 @@
             this.MachineNameTextBox.Size = new System.Drawing.Size(273, 26);
             this.MachineNameTextBox.TabIndex = 1;
             this.MachineNameTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.MachineNameTextBox.TextChanged += new System.EventHandler(this.MachineNameTextBox_TextChanged);
             // 
             // DbNameTextBox
             // 

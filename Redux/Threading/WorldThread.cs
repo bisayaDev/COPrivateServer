@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Redux.Events;
 using Redux.Managers;
 
 namespace Redux.Threading
@@ -37,6 +38,13 @@ namespace Redux.Threading
                 MapManager.MapManager_Tick();
 
                 GuildWar.GuildWar_Tick();
+                
+                /*if (DateTime.UtcNow.Minute == 45 && DateTime.UtcNow.Second == 00)
+                    FreeForAll.StartEvent();
+                else if (DateTime.UtcNow.Minute == 46 && DateTime.UtcNow.Second == 00)
+                    FreeForAll.Send();
+                else if (DateTime.UtcNow.Minute == 55 && DateTime.UtcNow.Second == 00)
+                    FreeForAll.EndEvent();*/
             }
 
             return true;

@@ -38,8 +38,10 @@ namespace Redux.Packets.Game
 
         public static implicit operator byte[](WarehouseActionPacket data)
         {
+            
             const int SIZE = 24;
             var packet = new byte[24 + SIZE * (data.Action == WarehouseAction.ListItems ? data.Value : 1)];
+            
             fixed (byte* ptr = packet)
             {
                 PacketBuilder.AppendHeader(ptr, packet.Length, Constants.MSG_WAREHOUSE_ACTION);

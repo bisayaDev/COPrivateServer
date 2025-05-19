@@ -15,7 +15,15 @@ namespace Redux.Items
         	{
 	            var type = Type.GetType("Redux.Items.Item_" + _item.StaticID);
 	            IItem item = Activator.CreateInstance(type) as IItem;
-	            item.Run(_client,_item);
+                if (_item.StaticID == Constants.DRAGONBALL_ID)
+                {
+                    item.Run(_client, _item);
+                }
+                else
+                {
+                    item.Run(_client, _item);
+
+                }
             }
             catch { _client.SendMessage("Could not load script for item ID: " + _item.StaticID); }
         }

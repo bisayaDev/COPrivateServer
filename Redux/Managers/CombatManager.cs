@@ -21,7 +21,7 @@ namespace Redux.Managers
         public ConcurrentDictionary<ushort, ConquerSkill> skills;
         public ConcurrentDictionary<ushort, ConquerProficiency> proficiencies;
         public bool HasXPSkills = false;
-
+        public CombatStatistics CombatStats;
         private bool canceled = false;
 
         //We need to track the state. 
@@ -688,7 +688,7 @@ namespace Redux.Managers
             if (target == null)
             { AbortAttack(); return; }
             var dist = Calculations.GetDistance(owner, target);
-            if (target == null || !IsValidTarget(target) || !IsInAttackRange(target) || target.HasEffect(ClientEffect.Fly) && target.AttackRange < 5)
+            if (Constants.FBSSMap.Contains(target.MapID) || target == null || !IsValidTarget(target) || !IsInAttackRange(target) || target.HasEffect(ClientEffect.Fly) && target.AttackRange < 5)
             { AbortAttack(); return; }
             targetUID = target.UID;
             if (Common.Clock < nextTrigger)
@@ -707,7 +707,9 @@ namespace Redux.Managers
             try
             {
                 target = owner.Map.Search<Entity>(targetUID);
-                if (!owner.Alive || target == null || !IsValidTarget(target) || !IsInAttackRange(target) || target.HasEffect(ClientEffect.Fly) && target.AttackRange < 5)
+                if (target == null) { AbortAttack(); return; }
+
+                if (Constants.FBSSMap.Contains(target.MapID) || !owner.Alive || target == null || !IsValidTarget(target) || !IsInAttackRange(target) || target.HasEffect(ClientEffect.Fly) && target.AttackRange < 5)
                 { AbortAttack(); return; }
 
                 //Do not check equipment if we have none
@@ -717,12 +719,13 @@ namespace Redux.Managers
                     if (skill != null)
                     { location = target.Location; LaunchSkill(); return; }
                 }
+
                 DisplaySuperGemEffects();
                 //Deal damage to target
                 state = SkillState.Attack;
                 nextTrigger = Common.Clock + owner.AttackSpeed / (owner.HasEffect(ClientEffect.Cyclone) ? 3 : 1);
                 uint dmg;
-                if (owner.WeaponType == 500)
+                if (owner.WeaponType == 500) 
                 {
                     ConquerItem item;
                     owner.Equipment.TryGetItemBySlot(5, out item);
@@ -734,10 +737,11 @@ namespace Redux.Managers
                     {
                         item.Durability -= 1;
                         owner.Send(ItemInformationPacket.Create(item, ItemInfoAction.Update));
-                        if (item.Durability == 0)
+                        if (item.Durability < 6 )
                         {
-                            owner.Equipment.UnequipItem(5);
-                            (owner as Player).DeleteItem(item);
+                            item.Durability = 1500; // CHECK HERE AUTO RELOAD
+                            /*owner.Equipment.UnequipItem(5);
+                            (owner as Player).DeleteItem(item);*/
                         }
                     }
                     dmg = owner.CalculateBowDamage(target, null, true);
@@ -902,6 +906,9 @@ namespace Redux.Managers
                 return true;
             if (_magicType.WeaponSubtype == 500)
             {
+                if (Constants.FBSSMap.Contains(owner.MapID))
+                    return false;
+
                 if (_magicType.UseItem == 50 && _magicType.UseItemNum > 0)
                 {
                     ConquerItem item;
@@ -938,10 +945,12 @@ namespace Redux.Managers
 
                     item.Durability -= _magicType.UseItemNum;
                     owner.Send(ItemInformationPacket.Create(item, ItemInfoAction.Update));
-                    if (item.Durability == 0)
+                    if (item.Durability < 6)
                     {
-                        owner.Equipment.UnequipItem(5);
-                        (owner as Player).DeleteItem(item);
+                        //AUTO RELOAD ARROW
+                        item.Durability += 1500;
+                        //owner.Equipment.UnequipItem(5);
+                        //(owner as Player).DeleteItem(item);
                     }
                 }
             }
@@ -987,7 +996,6 @@ namespace Redux.Managers
             }
             else if (_target is Monster)
             {
-
                 //Player->monster is valid as long as the type is 3 OR we are on pk/team mode
                 if (owner is Player)
                     valid = ((Monster)_target).BaseMonster.AttackMode == 3 || owner.PkMode == PKMode.PK || owner.PkMode == PKMode.Team;
@@ -1020,6 +1028,11 @@ namespace Redux.Managers
         {
             if (_target == null)
                 return false;
+
+            bool canCast = false;
+            if (Constants.FBSSMap.Contains(_target.MapID) && skill.ID == 1045 || skill.ID == 1046)
+                return canCast;
+
             return _magicType.Distance >= Calculations.GetDistance(owner.Location.X, owner.Location.Y, _target.Location.X, _target.Location.Y);
         }
         #endregion
@@ -1047,6 +1060,9 @@ namespace Redux.Managers
         }
         public void AddProficiencyExperience(ushort _id, ulong _amount)
         {
+            var client = owner as Player;
+            CombatStats = new CombatStatistics();
+
             if (_amount == 0)
                 return;
             if (!proficiencies.ContainsKey(_id))
@@ -1056,7 +1072,18 @@ namespace Redux.Managers
                 var prof = proficiencies[_id];
                 if (prof.Level >= 20)
                     return;
-                prof.Experience += (uint)_amount;
+
+                var bonus = client.CombatStats.VioletGemPct / 100;
+                
+                //prof.Experience += (uint)_amount;
+                uint finalXp = (uint)_amount * Constants.PROF_RATE + (uint)((double)_amount * bonus) ;
+                
+                prof.Experience += finalXp;
+                float profExpPcnt = (float)((double)prof.Experience / (double)Constants.ProficiencyLevelExperience[prof.Level]) * 100;
+                
+                if(client.is_prof_xp_show)//SHOW CURRENT PROF EXP AND PERCENT IN SYSTEM MESSAGE
+                    client.SendMessage("Prof Exp: " + prof.Experience + "/" + Constants.ProficiencyLevelExperience[prof.Level] + " [" + Math.Round(profExpPcnt,3) + "%]", ChatType.System);
+                
                 while (prof.Level < Constants.ProficiencyLevelExperience.Length && prof.Experience >= Constants.ProficiencyLevelExperience[prof.Level])
                 {
                     prof.Experience -= Constants.ProficiencyLevelExperience[prof.Level];

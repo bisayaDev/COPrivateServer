@@ -1,0 +1,121 @@
+ERROR PROCESSING PACKET FOR USER: BossATE
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Redux.Game_Server.Player.CreateDBItem(UInt32 _staticID, ItemLocation location, Byte _plus, Byte _bless, Byte _enchant, Byte _gem1, Byte _gem2, Boolean _locked, Byte _effect) in E:\CO PROJECT\Redux 3.05\Redux\Objects\Player.cs:line 971
+   at Redux.Game_Server.Player.CreateDbCharacter(String name, UInt16 body, Byte profession) in E:\CO PROJECT\Redux 3.05\Redux\Objects\Player.cs:line 722
+   at Redux.Game_Server.GameServer.Process_MsgRegisterPacket(Player client, RegisterPacket packet) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 197
+   at Redux.Game_Server.GameServer.ProcessPacket(Player client, Byte* ptr, Byte[] safePacket, UInt16 type) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 144
+   at Redux.Game_Server.GameServer.OnReceive(NetworkClient client, Byte[] buffer) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 103
+ERROR PROCESSING PACKET FOR USER: ast2
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Redux.Game_Server.Player.CreateDBItem(UInt32 _staticID, ItemLocation location, Byte _plus, Byte _bless, Byte _enchant, Byte _gem1, Byte _gem2, Boolean _locked, Byte _effect) in E:\CO PROJECT\Redux 3.05\Redux\Objects\Player.cs:line 971
+   at Redux.Game_Server.Player.CreateDbCharacter(String name, UInt16 body, Byte profession) in E:\CO PROJECT\Redux 3.05\Redux\Objects\Player.cs:line 722
+   at Redux.Game_Server.GameServer.Process_MsgRegisterPacket(Player client, RegisterPacket packet) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 197
+   at Redux.Game_Server.GameServer.ProcessPacket(Player client, Byte* ptr, Byte[] safePacket, UInt16 type) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 144
+   at Redux.Game_Server.GameServer.OnReceive(NetworkClient client, Byte[] buffer) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 103
+ERROR PROCESSING PACKET FOR USER: KingCobra
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Redux.Managers.TradeSequence.ProcessTradePacket(Player sender, TradePacket packet) in E:\CO PROJECT\Redux 3.05\Redux\Managers\Trade.cs:line 83
+   at Redux.Game_Server.GameServer.Process_Trade(Player client, TradePacket packet) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 2172
+   at Redux.Game_Server.GameServer.ProcessPacket(Player client, Byte* ptr, Byte[] safePacket, UInt16 type) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 164
+   at Redux.Game_Server.GameServer.OnReceive(NetworkClient client, Byte[] buffer) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 103
+ERROR PROCESSING PACKET FOR USER: KingCobra
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Redux.Game_Server.GameServer.Process_ItemActionPacket(Player client, ItemActionPacket packet) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 1034
+   at Redux.Game_Server.GameServer.ProcessPacket(Player client, Byte* ptr, Byte[] safePacket, UInt16 type) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 148
+   at Redux.Game_Server.GameServer.OnReceive(NetworkClient client, Byte[] buffer) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 103
+ERROR PROCESSING PACKET FOR USER: Quickie
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Redux.Managers.CombatManager.IsInSkillRange(Entity _target, DbMagicType _magicType) in E:\CO PROJECT\Redux 3.05\Redux\Managers\CombatManager.cs:line 1025
+   at Redux.Managers.CombatManager.LaunchAttachStatusSkill() in E:\CO PROJECT\Redux 3.05\Redux\Managers\CombatManager.cs:line 380
+   at Redux.Managers.CombatManager.LaunchSkill() in E:\CO PROJECT\Redux 3.05\Redux\Managers\CombatManager.cs:line 252
+   at Redux.Managers.CombatManager.ProcessSkill(InteractPacket _packet) in E:\CO PROJECT\Redux 3.05\Redux\Managers\CombatManager.cs:line 216
+   at Redux.Managers.CombatManager.ProcessInteractionPacket(InteractPacket _packet) in E:\CO PROJECT\Redux 3.05\Redux\Managers\CombatManager.cs:line 116
+   at Redux.Game_Server.GameServer.ProcessPacket(Player client, Byte* ptr, Byte[] safePacket, UInt16 type) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 151
+   at Redux.Game_Server.GameServer.OnReceive(NetworkClient client, Byte[] buffer) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 93
+ERROR PROCESSING PACKET FOR USER: Quickie
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Redux.Game_Server.GameServer.Process_ItemActionPacket(Player client, ItemActionPacket packet) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 1034
+   at Redux.Game_Server.GameServer.ProcessPacket(Player client, Byte* ptr, Byte[] safePacket, UInt16 type) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 148
+   at Redux.Game_Server.GameServer.OnReceive(NetworkClient client, Byte[] buffer) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 103
+ERROR PROCESSING PACKET FOR USER: Quickie
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Redux.Game_Server.GameServer.Process_ItemActionPacket(Player client, ItemActionPacket packet) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 1034
+   at Redux.Game_Server.GameServer.ProcessPacket(Player client, Byte* ptr, Byte[] safePacket, UInt16 type) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 148
+   at Redux.Game_Server.GameServer.OnReceive(NetworkClient client, Byte[] buffer) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 103
+ERROR PROCESSING PACKET FOR USER: Quickie
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Redux.Game_Server.GameServer.Process_ItemActionPacket(Player client, ItemActionPacket packet) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 1034
+   at Redux.Game_Server.GameServer.ProcessPacket(Player client, Byte* ptr, Byte[] safePacket, UInt16 type) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 148
+   at Redux.Game_Server.GameServer.OnReceive(NetworkClient client, Byte[] buffer) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 103
+ERROR PROCESSING PACKET FOR USER: Kikuyashii
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Redux.Managers.CombatManager.IsInSkillRange(Entity _target, DbMagicType _magicType) in E:\CO PROJECT\Redux 3.05\Redux\Managers\CombatManager.cs:line 1027
+   at Redux.Managers.CombatManager.LaunchAttackSkill() in E:\CO PROJECT\Redux 3.05\Redux\Managers\CombatManager.cs:line 287
+   at Redux.Managers.CombatManager.LaunchSkill() in E:\CO PROJECT\Redux 3.05\Redux\Managers\CombatManager.cs:line 255
+   at Redux.Managers.CombatManager.ProcessSkill(InteractPacket _packet) in E:\CO PROJECT\Redux 3.05\Redux\Managers\CombatManager.cs:line 216
+   at Redux.Managers.CombatManager.ProcessInteractionPacket(InteractPacket _packet) in E:\CO PROJECT\Redux 3.05\Redux\Managers\CombatManager.cs:line 116
+   at Redux.Game_Server.GameServer.ProcessPacket(Player client, Byte* ptr, Byte[] safePacket, UInt16 type) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 151
+   at Redux.Game_Server.GameServer.OnReceive(NetworkClient client, Byte[] buffer) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 93
+ERROR PROCESSING PACKET FOR USER: Quickie
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Redux.Managers.CombatManager.LaunchSkill() in E:\CO PROJECT\Redux 3.05\Redux\Managers\CombatManager.cs:line 232
+   at Redux.Managers.CombatManager.ProcessSkill(InteractPacket _packet) in E:\CO PROJECT\Redux 3.05\Redux\Managers\CombatManager.cs:line 216
+   at Redux.Managers.CombatManager.ProcessInteractionPacket(InteractPacket _packet) in E:\CO PROJECT\Redux 3.05\Redux\Managers\CombatManager.cs:line 116
+   at Redux.Game_Server.GameServer.ProcessPacket(Player client, Byte* ptr, Byte[] safePacket, UInt16 type) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 151
+   at Redux.Game_Server.GameServer.OnReceive(NetworkClient client, Byte[] buffer) in E:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 103
+ERROR PROCESSING PACKET FOR USER: test
+System.IndexOutOfRangeException: Index was outside the bounds of the array.
+   at Redux.Commands.Process_Add_Npc(Player client, String[] command) in F:\CO PROJECT\Redux 3.05\Redux\Commands.cs:line 422
+   at Redux.Commands.Handle(Player client, String[] command) in F:\CO PROJECT\Redux 3.05\Redux\Commands.cs:line 24
+   at Redux.Game_Server.GameServer.Process_TalkPacket(Player client, TalkPacket packet) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 209
+   at Redux.Game_Server.GameServer.ProcessPacket(Player client, Byte* ptr, Byte[] safePacket, UInt16 type) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 149
+   at Redux.Game_Server.GameServer.OnReceive(NetworkClient client, Byte[] buffer) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 103
+ERROR PROCESSING PACKET FOR USER: LadyPrincess
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Redux.Game_Server.Player.CreateDBItem(UInt32 _staticID, ItemLocation location, Byte _plus, Byte _bless, Byte _enchant, Byte _gem1, Byte _gem2, Boolean _locked, Byte _effect) in F:\CO PROJECT\Redux 3.05\Redux\Objects\Player.cs:line 983
+   at Redux.Game_Server.Player.CreateDbCharacter(String name, UInt16 body, Byte profession) in F:\CO PROJECT\Redux 3.05\Redux\Objects\Player.cs:line 734
+   at Redux.Game_Server.GameServer.Process_MsgRegisterPacket(Player client, RegisterPacket packet) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 197
+   at Redux.Game_Server.GameServer.ProcessPacket(Player client, Byte* ptr, Byte[] safePacket, UInt16 type) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 144
+   at Redux.Game_Server.GameServer.OnReceive(NetworkClient client, Byte[] buffer) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 103
+ERROR PROCESSING PACKET FOR USER: LadyIra
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Redux.Game_Server.Player.CreateDBItem(UInt32 _staticID, ItemLocation location, Byte _plus, Byte _bless, Byte _enchant, Byte _gem1, Byte _gem2, Boolean _locked, Byte _effect) in F:\CO PROJECT\Redux 3.05\Redux\Objects\Player.cs:line 984
+   at Redux.Game_Server.Player.CreateDbCharacter(String name, UInt16 body, Byte profession) in F:\CO PROJECT\Redux 3.05\Redux\Objects\Player.cs:line 734
+   at Redux.Game_Server.GameServer.Process_MsgRegisterPacket(Player client, RegisterPacket packet) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 197
+   at Redux.Game_Server.GameServer.ProcessPacket(Player client, Byte* ptr, Byte[] safePacket, UInt16 type) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 144
+   at Redux.Game_Server.GameServer.OnReceive(NetworkClient client, Byte[] buffer) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 103
+ERROR PROCESSING PACKET FOR USER: Kanc
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Redux.Game_Server.Player.CreateDBItem(UInt32 _staticID, ItemLocation location, Byte _plus, Byte _bless, Byte _enchant, Byte _gem1, Byte _gem2, Boolean _locked, Byte _effect) in F:\CO PROJECT\Redux 3.05\Redux\Objects\Player.cs:line 984
+   at Redux.Game_Server.Player.CreateDbCharacter(String name, UInt16 body, Byte profession) in F:\CO PROJECT\Redux 3.05\Redux\Objects\Player.cs:line 734
+   at Redux.Game_Server.GameServer.Process_MsgRegisterPacket(Player client, RegisterPacket packet) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 197
+   at Redux.Game_Server.GameServer.ProcessPacket(Player client, Byte* ptr, Byte[] safePacket, UInt16 type) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 144
+   at Redux.Game_Server.GameServer.OnReceive(NetworkClient client, Byte[] buffer) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 103
+ERROR PROCESSING PACKET FOR USER: Shhy
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Redux.Game_Server.Player.CreateDBItem(UInt32 _staticID, ItemLocation location, Byte _plus, Byte _bless, Byte _enchant, Byte _gem1, Byte _gem2, Boolean _locked, Byte _effect) in F:\CO PROJECT\Redux 3.05\Redux\Objects\Player.cs:line 1009
+   at Redux.Game_Server.Player.CreateDbCharacter(String name, UInt16 body, Byte profession)
+   at Redux.Game_Server.GameServer.Process_MsgRegisterPacket(Player client, RegisterPacket packet)
+   at Redux.Game_Server.GameServer.ProcessPacket(Player client, Byte* ptr, Byte[] safePacket, UInt16 type)
+   at Redux.Game_Server.GameServer.OnReceive(NetworkClient client, Byte[] buffer)
+ERROR PROCESSING PACKET FOR USER: Tase
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Redux.Game_Server.Player.CreateDBItem(UInt32 _staticID, ItemLocation location, Byte _plus, Byte _bless, Byte _enchant, Byte _gem1, Byte _gem2, Boolean _locked, Byte _effect) in F:\CO PROJECT\Redux 3.05\Redux\Objects\Player.cs:line 1009
+   at Redux.Game_Server.Player.CreateDbCharacter(String name, UInt16 body, Byte profession) in F:\CO PROJECT\Redux 3.05\Redux\Objects\Player.cs:line 765
+   at Redux.Game_Server.GameServer.Process_MsgRegisterPacket(Player client, RegisterPacket packet) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 197
+   at Redux.Game_Server.GameServer.ProcessPacket(Player client, Byte* ptr, Byte[] safePacket, UInt16 type) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 144
+   at Redux.Game_Server.GameServer.OnReceive(NetworkClient client, Byte[] buffer) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 103
+ERROR PROCESSING PACKET FOR USER: tes1123
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Redux.Game_Server.Player.CreateDBItem(UInt32 _staticID, ItemLocation location, Byte _plus, Byte _bless, Byte _enchant, Byte _gem1, Byte _gem2, Boolean _locked, Byte _effect) in F:\CO PROJECT\Redux 3.05\Redux\Objects\Player.cs:line 1009
+   at Redux.Game_Server.Player.CreateDbCharacter(String name, UInt16 body, Byte profession) in F:\CO PROJECT\Redux 3.05\Redux\Objects\Player.cs:line 765
+   at Redux.Game_Server.GameServer.Process_MsgRegisterPacket(Player client, RegisterPacket packet) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 197
+   at Redux.Game_Server.GameServer.ProcessPacket(Player client, Byte* ptr, Byte[] safePacket, UInt16 type) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 144
+   at Redux.Game_Server.GameServer.OnReceive(NetworkClient client, Byte[] buffer) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 103
+ERROR PROCESSING PACKET FOR USER: tzdc2
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Redux.Game_Server.Player.CreateDBItem(UInt32 _staticID, ItemLocation location, Byte _plus, Byte _bless, Byte _enchant, Byte _gem1, Byte _gem2, Boolean _locked, Byte _effect) in F:\CO PROJECT\Redux 3.05\Redux\Objects\Player.cs:line 1009
+   at Redux.Game_Server.Player.CreateDbCharacter(String name, UInt16 body, Byte profession) in F:\CO PROJECT\Redux 3.05\Redux\Objects\Player.cs:line 765
+   at Redux.Game_Server.GameServer.Process_MsgRegisterPacket(Player client, RegisterPacket packet) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 197
+   at Redux.Game_Server.GameServer.ProcessPacket(Player client, Byte* ptr, Byte[] safePacket, UInt16 type) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 144
+   at Redux.Game_Server.GameServer.OnReceive(NetworkClient client, Byte[] buffer) in F:\CO PROJECT\Redux 3.05\Redux\Network\GameServer.cs:line 103
